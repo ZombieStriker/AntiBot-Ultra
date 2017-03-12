@@ -33,7 +33,7 @@ public class Commands implements CommandExecutor {
         if (cmd.getName().equalsIgnoreCase("abu") && args.length == 1) {
             final String s;
             switch (s = args[0]) {
-                case "reload config": {
+                case "reload": {
                     if (sender.hasPermission("abu.reload")) {
                         sender.sendMessage("[AntiBot-Ultra] Usage -> /abu reload");
                     }
