@@ -1,0 +1,27 @@
+name: AntiBot-Ultra
+description: Working on it
+main: ro.aname.AntiBotUltra
+version: 6.3
+authors: [ImKermit]
+commands:
+ abu:
+  description: Shows the help menu
+ abu reload:
+  description: Reloads the config
+ abu add:
+  description: Adds the given player to the whitelist
+ abu remove:
+  description: Removes the given player from the whitelist
+permissions:
+ abu.reload:
+  description: Reloads configuration
+  default: op
+ abu.add:
+  description: Adds the given player to the whitelist
+  default: op
+ abu.remove:
+  description: Removes the given player from the whitelist
+  default: op
+ abu.bypass:
+  description: Allows the player to join without getting checked
+  default: op

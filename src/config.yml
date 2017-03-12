@@ -1,0 +1,58 @@
+Motd:
+  enabled: true
+Protection:
+  enabled: false
+  sensibility: 3
+  runTaskTimer: 100
+  runTaskTimer2: 100
+  runTaskLater: 2000
+  runTaskLater2: 6000
+NickProtection:
+  enabled: true
+ChatProtection:
+  enabled: true
+Proxy:
+  http://botscout,com/test/?ip=: Y
+  http://aname,dbmgaming,com/check,php?ip=: Y
+  http://api,stopforumspam,org/api?ip=: '<appears>yes</appears>'
+Whitelist:
+  add-enabled: true
+  add-delay: 1
+Messages:
+  attackDetected: 'Bot attack detected, whitelist turned off!'
+  attackAnalyze: 'Bot attack analyzing...'
+  attackFinish: 'Bot attack finished, whitelist off'
+  attackPersists: 'Bot attack persists, restarting counter..'
+  proxyKick: 'You have been kicked/nReason: Proxy detected!/nFor infos contact the administrator'
+  whitelistKick: 'You have been kicked/nReason: You are not on the whitelist!/nFor infos contact the administrator'
+  whitelistAdd: 'Player %player% was added to the whitelist!'
+  whitelistRemove: 'Player %player% was removed from the whitelist!'
+  nickKick: 'You have been kicked/nReason: You are a bot!/nFor infos contact the administrator'
+  chatDisable: 'You are just a bot!'
+
+#Permissions:
+# - abu.spy -> Usually used to see in the chat "Bot attack detected" or "Analyzing attack..."
+# - abu.bypass -> Usually used to bypass the protection
+# - abu.reload -> Usually used to reload the plugin
+# - abu.add -> Usually used to add a player to the whitelist
+# - abu.remove -> Usually used to remove a player from the whitelist
+#Motd:
+# - enabled -> Prints the message of the day :)
+#Protection:
+# - enabled -> When enabled, (whitelist will not work without this enabled) a scheduler will be fired when max of joins defined is reached
+# - sensibility -> Maximum tolerance of joins per second. > number means < detection rate & < number means > detection rate (kinda bad explanation, right?)
+# - runTaskTimer -> Ticks to wait before running the task (Complicated, right? mind your business and do not change this)
+# - runTaskTimer2 -> Ticks to wait between runs (Complicated, right? mind your business and do not change this)
+# - runTaskLater -> Ticks to wait before running the task (Complicated, right? mind your business and do not change this)
+# - runTaskLater2 -> Same as runTaskLater (Complicated, right? mind your business and do not change this)
+#NickProtection:
+# - enabled -> IF name contains mcspam/vps_bot_/vps_bot/bot_vps, joining is disabled.
+#ChatProtection: (Priority is set to low so that it won't override any other chat plugins if they are installed)
+# - enabled -> IF player chats mcspam rocks/join server/connect server/(regex: contains digits & dots)\d*\.?\d+, message will be removed
+#Proxy: (Just comment the url to "remove" it, technically speaking)
+# - botscout.com -> Not recommended because it only has 100 queries per day!
+# - aname.dbmgaming.com -> Recommended, thats where almost all the "mcspam/deathbot" proxies are located (Updated almost everyday)
+# - api.stopforumspam.com -> Recommended, visit https://www.stopforumspam.com/stats to see all their stats!
+#Whitelist:
+# - add-enabled -> When enabled, will only add players to the whitelist. If protection is enabled & this disabled, only the players on that list will join.
+# - add-delay -> After the defined time has passed, the player will be added to the whitelist (in seconds)
