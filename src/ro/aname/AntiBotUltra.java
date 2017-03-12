@@ -49,7 +49,7 @@ public class AntiBotUltra extends JavaPlugin {
         instance = this;
         pluginEnabled = true;
         Bukkit.getServer().getPluginManager().registerEvents(new ConnectEvent(), AntiBotUltra.getInstance());
-        getCommand("abu").setExecutor(new Commands());
+        //getCommand("abu").setExecutor(new Commands());
         Hbot = new HashMap<>();
         Hbot.put("LoginCount", 0);
         blacklists = new HashMap<>();
