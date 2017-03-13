@@ -5,9 +5,20 @@ import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 import ro.aname.events.ConnectEvent;
-import ro.aname.utils.*;
+import ro.aname.utils.Metrics;
+import ro.aname.utils.Updater;
+import ro.aname.utils.Website;
+import ro.aname.utils.WhitelistManager;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,6 +43,9 @@ public class AntiBotUltra extends JavaPlugin {
     private BukkitTask taskId;
     private Map<String, Object> blacklists;
     private HashMap<String, Integer> Hbot;
+    private List<String> proxyList;
+
+    private int downloadedProxies;
 
     private ConfigHandler configHandler;
     private WhitelistManager whitelistManager;
@@ -44,36 +58,47 @@ public class AntiBotUltra extends JavaPlugin {
         return instance;
     }
 
+    //    commands:
+//    antibot-ultra:
+//    description: Your description
+//    usage: /kit
     @Override
     public void onEnable() {
         instance = this;
         pluginEnabled = true;
         Bukkit.getServer().getPluginManager().registerEvents(new ConnectEvent(), AntiBotUltra.getInstance());
-        //getCommand("abu").setExecutor(new Commands());
+        this.getCommand("antibot-ultra").setExecutor(new Commands());
         Hbot = new HashMap<>();
         Hbot.put("LoginCount", 0);
         blacklists = new HashMap<>();
+        proxyList = new ArrayList<>();
         blacklists.put("http://botscout,com/test/?ip=", "Y");
-        blacklists.put("http://aname,dbmgaming,com/check,php?ip=", "Y");
         blacklists.put("http://api,stopforumspam,org/api?ip=", "<appears>yes</appears>");
         configHandler = new ConfigHandler();
         whitelistManager = new WhitelistManager();
         whitelistManager.saveDefaultConfig();
         configHandler.saveDefaultConfig();
-        configHandler.getCustomConfig().getConfigurationSection("Proxy").getValues(true);
+        configHandler.getCustomConfig().getConfigurationSection("Proxy-List").getValues(true);
         new Metrics(this);
         updater = new Updater(this, "22933");
         Updater.UpdateResults result = updater.checkForUpdates();
         if (result.getResult() == Updater.UpdateResult.FAIL) {
-            System.out.println("[AntiBot-Ultra] -> Failed to check for updates!");
-            System.out.println("[AntiBot-Ultra] -> Stacktrace: " + result.getVersion());
+            if (configHandler.getCustomConfig().getBoolean("Debug.enabled")) {
+                System.out.println("[AntiBot-Ultra] -> Failed to check for updates!");
+                System.out.println("[AntiBot-Ultra] -> Stacktrace: " + result.getVersion());
+            }
         } else if (result.getResult() == Updater.UpdateResult.NO_UPDATE) {
-            System.out.println("[AntiBot-Ultra] -> There are no new updates!");
+            if (configHandler.getCustomConfig().getBoolean("Debug.enabled")) {
+                System.out.println("[AntiBot-Ultra] -> There are no new updates!");
+            }
         } else if (result.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE) {
-            System.out.println("[AntiBot-Ultra] -> There are new updates!");
-            System.out.println("[AntiBot-Ultra] -> New version: " + result.getVersion());
-            System.out.println("[AntiBot-Ultra] -> Visit 'https://www.spigotmc.org/resources/antibot-ultra.22933/' to download " + result.getVersion() + " !");
+            if (configHandler.getCustomConfig().getBoolean("Debug.enabled")) {
+                System.out.println("[AntiBot-Ultra] -> There are new updates!");
+                System.out.println("[AntiBot-Ultra] -> New version: " + result.getVersion());
+                System.out.println("[AntiBot-Ultra] -> Visit 'https://www.spigotmc.org/resources/antibot-ultra.22933/' to download " + result.getVersion() + " !");
+            }
         }
+        downloadProxies();
         Website.readMessage();
         protection();
     }
@@ -84,6 +109,45 @@ public class AntiBotUltra extends JavaPlugin {
         //if (Bukkit.getScheduler().isCurrentlyRunning(whitelistManager.bukkitTask.getTaskId())) whitelistManager.bukkitTask.cancel();
         //if (Bukkit.getScheduler().isCurrentlyRunning(taskId.getTaskId())) taskId.cancel();
         whitelistManager.getPlayersInConfig().clear();
+        getBlacklists().clear();
+        getHbot().clear();
+        getProxyList().clear();
+        getServer().getScheduler().cancelTasks(AntiBotUltra.getInstance());
+    }
+
+    public void downloadProxies() {
+        if (configHandler.getCustomConfig().getBoolean("Proxy.download")) {
+            if (configHandler.getCustomConfig().getBoolean("Debug.enabled")) {
+                System.out.println("[AntiBot-Ultra] Downloading proxies in 5 seconds!");
+            }
+            Bukkit.getScheduler().runTaskLater(AntiBotUltra.getInstance(), () -> {
+                URL url;
+                try {
+                    // get URL content
+
+                    String a = "http://aname.dbmgaming.com/proxylist.txt";
+                    url = new URL(a);
+                    URLConnection conn = url.openConnection();
+
+                    // open the stream and put it into BufferedReader
+                    BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+                    String inputLine;
+                    while ((inputLine = br.readLine()) != null) {
+                        proxyList.add(inputLine);
+                        downloadedProxies++;
+                    }
+                    br.close();
+                    if (configHandler.getCustomConfig().getBoolean("Debug.enabled")) {
+                        System.out.println("[AntiBot-Ultra] -> Downloaded " + downloadedProxies + " proxies!");
+                    }
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }, 100L);
+        }
     }
 
     private void protection() {
@@ -124,6 +188,14 @@ public class AntiBotUltra extends JavaPlugin {
 
     public HashMap<String, Integer> getHbot() {
         return Hbot;
+    }
+
+    public List<String> getProxyList() {
+        return proxyList;
+    }
+
+    public int getDownloadedProxies() {
+        return downloadedProxies;
     }
 
     public Updater getUpdater() {

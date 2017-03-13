@@ -1,6 +1,5 @@
 package ro.aname.events;
 
-import jdk.nashorn.internal.runtime.regexp.joni.Config;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -11,7 +10,6 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import ro.aname.AntiBotUltra;
 import ro.aname.ConfigHandler;
 import ro.aname.utils.Proxy;
-import ro.aname.utils.Updater;
 import ro.aname.utils.WhitelistManager;
 
 import static org.bukkit.event.player.PlayerLoginEvent.Result.KICK_OTHER;
@@ -39,16 +37,24 @@ public class ConnectEvent implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerLoginEvent(PlayerLoginEvent event) {
         Player p = event.getPlayer();
-        String IP = event.getAddress().getHostAddress();
+        String ip = event.getAddress().getHostAddress();
+
         if (configHandler.getCustomConfig().getBoolean("NickProtection.enabled")) {
             if (p.getName().toLowerCase().contains("vps_bot_") || p.getName().toLowerCase().contains("vps_bot") || p.getName().toLowerCase().contains("bot_vps") || p.getName().toLowerCase().contains("mcspam")) {
                 event.disallow(KICK_OTHER, ChatColor.translateAlternateColorCodes('&', configHandler.getCustomConfig().getString("Messages.nickKick")));
             }
         }
-        if (Proxy.isProxy(IP)) {
+
+        if (Proxy.isProxy(ip)) {
             if (p.hasPermission("abu.bypass") || p.isOp()) return;
             event.disallow(KICK_OTHER, ChatColor.translateAlternateColorCodes('&', configHandler.getCustomConfig().getString("Messages.proxyKick")));
         }
+
+        if (AntiBotUltra.getInstance().getProxyList().contains(ip)) {
+            if (p.hasPermission("abu.bypass") || p.isOp()) return;
+            event.disallow(KICK_OTHER, ChatColor.translateAlternateColorCodes('&', configHandler.getCustomConfig().getString("Messages.proxyKick")));
+        }
+
         if (!whitelistManager.getWhitelistActive()) whitelistManager.setWhitelist(p);
 
         if (whitelistManager.getWhitelistActive()) {

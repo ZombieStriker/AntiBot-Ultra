@@ -89,7 +89,9 @@ public class WhitelistManager {
         if (configHandler.getCustomConfig().getBoolean("Protection.enabled") || configHandler.getCustomConfig().getBoolean("Whitelist.add-enabled")) {
             List<String> stringList = this.getCustomConfig().getStringList("Whitelisted-Players");
             if (IntStream.range(0, stringList.size()).mapToObj(stringList::get).anyMatch(playersInConfig -> playersInConfig.equalsIgnoreCase(player.getName()))) {
-                //System.out.println("[AntiBot-Ultra] -> Player " + player.getName() + " was found on the whitelist!");
+                if (configHandler.getCustomConfig().getBoolean("Debug.enabled")) {
+                    System.out.println("[AntiBot-Ultra] -> Player " + player.getName() + " was found on the whitelist!");
+                }
                 return true;
             }
         }
@@ -108,7 +110,9 @@ public class WhitelistManager {
                 if (!player.isOnline()) {
                     // Even if it doesn't get added to the list, just to be sure :)
                     if (playersInConfig.contains(player.getName())) playersInConfig.remove(player.getName());
-                    System.out.println("[AntiBot-Ultra] -> whitelist task (" + bukkitTask.getTaskId() + ") for player " + player.getName() + " has been cancelled! Reason: Player left the server!");
+                    if (configHandler.getCustomConfig().getBoolean("Debug.enabled")) {
+                        System.out.println("[AntiBot-Ultra] -> whitelist task (" + bukkitTask.getTaskId() + ") for player " + player.getName() + " has been cancelled! Reason: Player left the server!");
+                    }
                     Bukkit.getOnlinePlayers().stream().filter(playerMsg -> player.hasPermission("abu.spy")).forEach(playerMsg -> player.sendMessage(ChatColor.translateAlternateColorCodes('&', configHandler.getCustomConfig().getString("Messages.whitelistRemove").replace("%player", player.getName()))));
                     bukkitTask.cancel();
                     return;
@@ -117,11 +121,13 @@ public class WhitelistManager {
                     this.getCustomConfig().set("Whitelisted-Players", playersInConfig);
                     this.saveCustomConfig();
                     Bukkit.getOnlinePlayers().stream().filter(playerMsg -> player.hasPermission("abu.spy")).forEach(playerMsg -> player.sendMessage(ChatColor.translateAlternateColorCodes('&', configHandler.getCustomConfig().getString("Messages.whitelistAdd").replace("%player", player.getName()))));
-                    System.out.println("[AntiBot-Ultra] -> Player " + player.getName() + " was added to the whitelist");
+                    if (configHandler.getCustomConfig().getBoolean("Debug.enabled")) {
+                        System.out.println("[AntiBot-Ultra] -> Player " + player.getName() + " was added to the whitelist");
+                    }
                     return;
                 }
                 //System.out.println("Player2");
-            }, configHandler.getCustomConfig().getLong("Whitelist.add-delay"));
+            }, configHandler.getCustomConfig().getLong("Whitelist.add-delay") * 60L);
         }
         return false;
     }
@@ -131,13 +137,18 @@ public class WhitelistManager {
         if (!configHandler.getCustomConfig().getBoolean("Protection.enabled"))
             return false;
         if (player.isOp()) {
-            System.out.println("[AntiBot-Ultra] -> Someone just tried to remove an operator from the whitelist!");
+            if (configHandler.getCustomConfig().getBoolean("Debug.enabled")) {
+                System.out.println("[AntiBot-Ultra] -> Someone just tried to remove an operator from the whitelist!");
+            }
             return false;
         }
-        playersInConfig.remove(player.getName());
-        this.getCustomConfig().set("Whitelisted-Players", playersInConfig);
-        Bukkit.getOnlinePlayers().stream().filter(playerMsg -> player.hasPermission("abu.spy")).forEach(playerMsg -> player.sendMessage(ChatColor.translateAlternateColorCodes('&', configHandler.getCustomConfig().getString("Messages.whitelistRemove"))));
+        this.getCustomConfig().getStringList("Whitelisted-Players").remove(player.getName());
+        if (configHandler.getCustomConfig().getBoolean("Debug.enabled")) {
+            System.out.println("[AntiBot-Ultra] -> Player " + player.getName() + " was removed from the whitelist");
+        }
+        Bukkit.getOnlinePlayers().stream().filter(playerMsg -> player.hasPermission("abu.spy")).forEach(playerMsg -> player.sendMessage(ChatColor.translateAlternateColorCodes('&', configHandler.getCustomConfig().getString("Messages.whitelistRemove").replace("%player%", player.getName()))));
         this.saveCustomConfig();
+        this.reloadCustomConfig();
         //System.out.println("[AntiBot-Ultra] -> Player " + player.getName() + " was removed from the whitelist!");
         return true;
     }

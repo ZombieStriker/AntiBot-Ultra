@@ -1,3 +1,5 @@
+Debug:
+  enabled: true
 Motd:
   enabled: true
 Protection:
@@ -12,12 +14,13 @@ NickProtection:
 ChatProtection:
   enabled: true
 Proxy:
+  download: true
+Proxy-List:
   http://botscout,com/test/?ip=: Y
-  http://aname,dbmgaming,com/check,php?ip=: Y
   http://api,stopforumspam,org/api?ip=: '<appears>yes</appears>'
 Whitelist:
   add-enabled: true
-  add-delay: 1
+  add-delay: 5
 Messages:
   attackDetected: 'Bot attack detected, whitelist turned off!'
   attackAnalyze: 'Bot attack analyzing...'
@@ -36,6 +39,8 @@ Messages:
 # - abu.reload -> Usually used to reload the plugin
 # - abu.add -> Usually used to add a player to the whitelist
 # - abu.remove -> Usually used to remove a player from the whitelist
+#Debug:
+# - enabled -> Prints debug messages
 #Motd:
 # - enabled -> Prints the message of the day :)
 #Protection:
@@ -49,9 +54,10 @@ Messages:
 # - enabled -> IF name contains mcspam/vps_bot_/vps_bot/bot_vps, joining is disabled.
 #ChatProtection: (Priority is set to low so that it won't override any other chat plugins if they are installed)
 # - enabled -> IF player chats mcspam rocks/join server/connect server/(regex: contains digits & dots)\d*\.?\d+, message will be removed
-#Proxy: (Just comment the url to "remove" it, technically speaking)
+#Proxy:
+# - download -> Recommended, downloads proxy list & stores it into a list. Checking big list by openning a connection to a low website is verry performance cost!
+#Proxy-List: (Just comment the url to "remove" it, technically speaking)
 # - botscout.com -> Not recommended because it only has 100 queries per day!
-# - aname.dbmgaming.com -> Recommended, thats where almost all the "mcspam/deathbot" proxies are located (Updated almost everyday)
 # - api.stopforumspam.com -> Recommended, visit https://www.stopforumspam.com/stats to see all their stats!
 #Whitelist:
 # - add-enabled -> When enabled, will only add players to the whitelist. If protection is enabled & this disabled, only the players on that list will join.
